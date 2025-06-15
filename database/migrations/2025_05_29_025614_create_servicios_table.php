@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->text('descripcion');
             $table->decimal('precio', 8, 2);
             $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
-            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->boolean('activo')->default(1);
             $table->timestamps();
         });

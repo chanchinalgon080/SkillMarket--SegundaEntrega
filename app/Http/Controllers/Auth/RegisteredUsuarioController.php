@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Usuario;
+use App\Models\Usuario; 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,9 +14,7 @@ use Illuminate\View\View;
 
 class RegisteredUsuarioController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
+
     public function create(): View
     {
         return view('auth.register');
@@ -33,12 +31,14 @@ class RegisteredUsuarioController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'], 
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'user_type' => ['required', 'string', 'in:cliente,profesional'], 
         ]);
 
         $usuario = Usuario::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'user_type' => $request->user_type,
         ]);
 
         event(new Registered($usuario));

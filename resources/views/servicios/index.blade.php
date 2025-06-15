@@ -1,9 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Servicios') }}
-        </h2>
-    </x-slot>
 
     <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -15,6 +10,33 @@
                         {{ session('success') }}
                     </div>
                 @endif
+
+                {{-- FORMULARIO DE BÚSQUEDA --}}
+                <form action="{{ route('servicios.index') }}" method="GET" class="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <div>
+                        <label for="global_search" class="block text-sm font-medium text-gray-700">Búsqueda Global (título, descripción, categoría, usuario):</label>
+                        <input type="text" name="global_search" id="global_search" placeholder="Buscar en todo..." value="{{ request('global_search') }}"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700">Búsqueda por título o descripción (específico):</label>
+                        <input type="text" name="search" id="search" placeholder="Título o descripción..." value="{{ request('search') }}"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="md:col-span-2 flex justify-end gap-2">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 transition ease-in-out duration-150">
+                            Aplicar Búsqueda
+                        </button>
+                        @if(request('search') || request('global_search'))
+                            <a href="{{ route('servicios.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-400 focus:ring ring-gray-300 transition ease-in-out duration-150">
+                                Limpiar Búsqueda
+                            </a>
+                        @endif
+                    </div>
+                </form>
+                {{-- FIN DEL FORMULARIO DE BÚSQUEDA --}}
 
                 <div class="flex justify-end mb-6">
                     <a href="{{ route('servicios.create') }}"
@@ -34,7 +56,14 @@
                                 Precio: <span class="font-normal">${{ number_format($servicio->precio, 2) }}</span>
                             </p>
                             <p class="text-gray-800 font-semibold text-sm">
-                                Categoría: <span class="font-normal">{{ $servicio->categoria->name ?? 'Sin categoría' }}</span>
+                                Categorías:
+                                <span class="font-normal">
+                                    @forelse ($servicio->categorias as $categoria)
+                                        {{ $categoria->name }}{{ !$loop->last ? ', ' : '' }}
+                                    @empty
+                                        Sin categoría
+                                    @endforelse
+                                </span>
                             </p>
                             <p class="text-gray-800 font-semibold text-sm">
                                 Activo:
@@ -56,7 +85,6 @@
                                 Editar
                             </a>
 
-                            {{-- Formulario para eliminar servicio --}}
                             <form action="{{ route('servicios.destroy', $servicio->id) }}" method="POST"
                                   x-data="{ showDeleteModal: false }"
                                   @submit.prevent="showDeleteModal = true"
@@ -67,7 +95,6 @@
                                     Eliminar
                                 </button>
 
-                                {{-- Modal de confirmación (Alpine.js) --}}
                                 <div x-show="showDeleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4">
                                     <div @click.away="showDeleteModal = false" class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
                                         <h3 class="text-lg font-bold text-gray-900 mb-4">Confirmar Eliminación</h3>

@@ -15,20 +15,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Ruta dashboard usando controlador y middleware auth y verified
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// Grupo de rutas protegidas por auth
 Route::middleware(['auth'])->group(function () {
 
-    // Perfil usuario
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rutas recursos (CRUD) para todos tus controladores
     Route::resource('categorias', CategoriaController::class);
     Route::resource('servicios', ServicioController::class);
     Route::resource('usuarios', UsuarioController::class);

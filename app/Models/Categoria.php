@@ -4,17 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Categoria extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre'];
+    protected $fillable = ['name', 'descripcion'];
 
-    // Relación: una categoría tiene muchos servicios
-    public function servicios()
+    public function servicios(): BelongsToMany
     {
-        return $this->hasMany(Servicio::class, 'categoria_id');
+        return $this->belongsToMany(Servicio::class, 'categoria_servicio', 'categoria_id', 'servicio_id');
     }
 }
-

@@ -31,7 +31,6 @@ class Usuario extends Authenticatable
         ];
     }
 
-    // Relaciones
     public function servicios()
     {
         return $this->hasMany(Servicio::class, 'usuario_id');
